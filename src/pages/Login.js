@@ -4,12 +4,14 @@ import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
 
     const email = useRef("");
     const password = useRef("");
     const userRef = collection(db, 'users');
+    const navigate = useNavigate();
 
     const login = async (e) => {
         e.preventDefault();
@@ -18,12 +20,12 @@ const Login = () => {
         if(result.docs.length > 0){
             const user = result.docs[0].data()
             if(user.password === password.current.value){
-                console.log("redirect")
+                navigate("/dashboard", {replace: true})
             }else{
-                console.log("email or password incorrect")
+                alert("email or password incorrect")
             }
         }else{
-            console.log("email or password incorrect")
+            alert("email or password incorrect")
         }
     };
 
