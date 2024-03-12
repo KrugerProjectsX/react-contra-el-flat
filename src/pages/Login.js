@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -8,6 +8,8 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import loginPic from "../images/loginPic.png";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Error } from "../components/Error";
 
 const Login = () => {
@@ -15,6 +17,12 @@ const Login = () => {
   const password = useRef("");
   const userRef = collection(db, "users");
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+
+  const handlePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const login = async (e) => {
     e.preventDefault();
@@ -25,10 +33,10 @@ const Login = () => {
       if (user.password === password.current.value) {
         navigate("/dashboard", { replace: true });
       } else {
-        alert("email or password incorrect");
+        setError("Email or password incorrect");
       }
     } else {
-      alert("email or password incorrect");
+      setError("Email or password incorrect");
     }
   };
 
@@ -40,13 +48,13 @@ const Login = () => {
         </div>
       </div>
   
-      <div className="w-full lg:w-1/2 h-full flex flex-col bg-[#6D9773] items-center justify-center">
+      <div className="w-full lg:w-1/2 h-full flex flex-col bg-white items-center justify-center lg:bg-[#6D9773]">
         <Box
           onSubmit={login}
           component="form"
           noValidate
           autoComplete="off"
-          className="w-full lg:w-80 bg-[#FFFFFF] shadow-xl rounded-xl p-0 lg:p-6 lg:p-10"
+          className="w-full lg:w-80 bg-white lg:shadow-xl rounded-xl p-0 lg:p-6 lg:p-10"
         >
           <Typography variant="h4" className="m-2 text-center lg:text-left">
             Login
@@ -58,16 +66,23 @@ const Login = () => {
             label="Email"
             variant="outlined"
             type="email"
-            className="m-2 w-sreen lg:w-full"
+            className="m-2 w-sreen lg:m-2 lg:w-full"
           />
-  
+
           <TextField
             inputRef={password}
             id="outlined-basic"
             label="Password"
             variant="outlined"
-            type="password"
-            className="m-2 w-sreen lg:w-full"
+            type={showPassword ? "text" : "password"} // Cambiar el tipo de input según el estado de visibilidad de la contraseña
+            className="m-2 w-sreen lg:m-2 lg:w-full"
+            InputProps={{
+              endAdornment: (
+                <div onClick={handlePasswordVisibility} className="cursor-pointer">
+                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </div>
+              )
+            }}
           />
   
           <Button
@@ -77,6 +92,8 @@ const Login = () => {
           >
             Log in
           </Button>
+  
+          {error && <Error children={error} />} {/* Mostrar el componente Error si hay un mensaje de error */}
   
           <div className="flex flex-col lg:flex-row justify-center lg:justify-start items-center lg:items-start">
             <p className="m-2">Don't have an account?</p>
@@ -92,3 +109,4 @@ const Login = () => {
 };
 
 export { Login };
+
