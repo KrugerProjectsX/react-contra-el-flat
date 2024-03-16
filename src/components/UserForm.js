@@ -12,11 +12,11 @@ import { useNavigate } from "react-router-dom";
 
 const UserForm = ({ type }) => {
 
-    const currentDate = new Date().toJSON().slice(0, 10);
+  const currentDate = new Date().toJSON().slice(0, 10);
 
   const fnameRef = useRef("");
   const lnameRef = useRef("");
-  const birthDateRef = useRef("");
+  const birthDateRef = useRef(currentDate);
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const passwordConfirmationRef = useRef("");
@@ -128,7 +128,7 @@ const UserForm = ({ type }) => {
               variant="outlined"
               type="date"
               inputProps={{ min: maxBirthDate, max: minBirthDate }}
-              defaultValue={currentDate}
+              defaultValue={user.birthDate}
               className="m-2 col-span-2 lg:col-span-1"
             />
             <TextField
