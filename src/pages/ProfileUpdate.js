@@ -1,14 +1,12 @@
-/* material ui */
-import Typography from "@mui/material/Typography";
 /* components */
 import { UserForm } from "../components/UserForm";
 
-const Register = () => {
+const ProfileUpdate = () => {
     return(
         <div className="w-screen h-screen bg-white lg:bg-[#6D9773]">
-            <UserForm type={'create'}/>
+            <UserForm type={'update'}/>
         </div>
     )
 }
 
-export {Register};
+export {ProfileUpdate};

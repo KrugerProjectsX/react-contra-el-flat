@@ -1,15 +1,21 @@
+/* Hooks */
 import { useRef, useState } from "react";
+/* material ui */
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../firebase";
-import { useNavigate } from "react-router-dom";
-import loginPic from "../images/loginPic.png";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+/* firebase */
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../firebase";
+/* routes */
+import { useNavigate } from "react-router-dom";
+/* images */
+import loginPic from "../images/loginPic.png";
+/* components */
 import { Error } from "../components/Error";
 
 const Login = () => {
@@ -30,7 +36,9 @@ const Login = () => {
     const result = await getDocs(search);
     if (result.docs.length > 0) {
       const user = result.docs[0].data();
+      const user_id = result.docs[0].id;
       if (user.password === password.current.value) {
+        localStorage.setItem("user_logged", JSON.stringify(user_id))
         navigate("/dashboard", { replace: true });
       } else {
         setError("Email or password incorrect");
@@ -56,7 +64,7 @@ const Login = () => {
           autoComplete="off"
           className="w-full lg:w-80 bg-white lg:shadow-xl rounded-xl p-0 lg:p-6 lg:p-10"
         >
-          <Typography variant="h4" className="m-2 text-center lg:text-left">
+          <Typography variant="h4" className="m-2 text-center lg:text-left text-[#0C3B2E]">
             Login
           </Typography>
   
