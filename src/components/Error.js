@@ -1,6 +1,6 @@
 const Error = ({ children }) => {
     return(
-        <div className="m-5 bg-red-800 text-white text-center p-3 mb-3 rounded-md">
+        <div className="m-1 text-[#b91c1c] mx-auto w-80 flex justify-center">
             {children}
         </div>
     )

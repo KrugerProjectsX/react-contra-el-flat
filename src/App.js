@@ -5,6 +5,7 @@ import { Register } from "./pages/Register";
 import { Profile } from "./pages/Profile";
 import { ProfileUpdate } from "./pages/ProfileUpdate";
 import "./App.css"
+import { Users } from "./pages/Users";
 
 function App() {
   return (
@@ -13,7 +14,10 @@ function App() {
       <Route path={"/dashboard"} element={<Home/>}/>
       <Route path={"/register"} element={<Register/>}/>
       <Route path={"/profile"} element={<Profile/>}/>
-      <Route path={"/profile-edit"} element={<ProfileUpdate/>}/>
+      <Route path={"/profile/:userId"} element={<Profile/>}/>
+      <Route path={"/profile/edit"} element={<ProfileUpdate/>}/>
+      <Route path={"/profile/edit/:userId"} element={<ProfileUpdate/>}/>
+      <Route path={"/users"} element={<Users/>}/>
     </Routes>
   );
 }
