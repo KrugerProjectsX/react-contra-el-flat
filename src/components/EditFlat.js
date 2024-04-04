@@ -6,10 +6,14 @@ import { Box } from "@mui/material";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 
 function EditFlat({ id }) {
-
+  let location = useLocation();
+  location = location.pathname.substring(location.pathname.length - 4);
+  console.log(location);
   const navigate = useNavigate();
+  //console.log('VIEW: ' + view);
 
   const regex = {
     city: /^[\w\s'-]+$/,
@@ -91,6 +95,7 @@ function EditFlat({ id }) {
             </h1>
             <div className="flex gap-4">
               <TextField
+                disabled={location==='view'}
                 name="city"
                 type="text"
                 label="City"
@@ -101,6 +106,7 @@ function EditFlat({ id }) {
                 inputProps={{ pattern: regex.city.source }}
               />
               <TextField
+                disabled={location==='view'}
                 name="streetName"
                 type="text"
                 label="Street Name"
@@ -113,6 +119,7 @@ function EditFlat({ id }) {
             </div>
             <div className="flex gap-4">
               <TextField
+                disabled={location==='view'}
                 name="streetNumber"
                 type="number"
                 label="Street Number"
@@ -123,6 +130,7 @@ function EditFlat({ id }) {
                 inputProps={{ min: 0, pattern: regex.streetNumber.source }}
               />
               <TextField
+                disabled={location==='view'}
                 name="areaSize"
                 type="number"
                 label="Area Size"
@@ -135,6 +143,7 @@ function EditFlat({ id }) {
             </div>
             <div className="flex gap-4">
               <TextField
+                disabled={location==='view'}
                 name="yearBuilt"
                 type="number"
                 label="Year built"
@@ -146,6 +155,7 @@ function EditFlat({ id }) {
               />
               <Box className="flex items-center mb-3 w-full">
                 <Switch
+                  disabled={location==='view'}
                   name="hasAc"
                   checked={formData.hasAc}
                   onChange={(e) => setFormData({ ...formData, hasAc: e.target.checked })}
@@ -154,6 +164,7 @@ function EditFlat({ id }) {
               </Box>
             </div>
             <TextField
+              disabled={location==='view'}
               name="rentPrice"
               type="number"
               label="Rent price"
@@ -164,6 +175,7 @@ function EditFlat({ id }) {
               inputProps={{ min: 0, pattern: regex.rentPrice.source }}
             />
             <TextField
+              disabled={location==='view'}
               name="dateAvailable"
               type="date"
               variant="outlined"
@@ -180,6 +192,13 @@ function EditFlat({ id }) {
             >
               Update Flat
             </Button>
+            {location === 'view' && <Button onClick={
+              () => {
+                navigate(`/flats/view-flat/edit/${id}/${location='update'}`, { state: { flatId: id } })
+              }
+            }>
+              update
+            </Button> }
           </Box>
         </div>
       )}
@@ -187,4 +206,4 @@ function EditFlat({ id }) {
   );
 }
 
-export  { EditFlat } ;
+export { EditFlat } ;
