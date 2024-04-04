@@ -1,17 +1,13 @@
-/* material ui */
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-/* Hooks */
 import { useEffect, useRef, useState } from "react";
-/* firebase */
 import { doc, collection, addDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-/* routes */
-import { useNavigate } from "react-router-dom";
+import { unstable_HistoryRouter, useNavigate } from "react-router-dom";
+import { Error } from "./Error";
 
-const UserForm = ({ type }) => {
-
+const UserForm = ({ type, userId }) => {
   const currentDate = new Date().toJSON().slice(0, 10);
 
   const fnameRef = useRef("");
@@ -20,29 +16,49 @@ const UserForm = ({ type }) => {
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const passwordConfirmationRef = useRef("");
+  const userRoleRef = useRef("");
+  const [error, setError] = useState("");
+
+  let ref = null;
+  if (userId == null && type !== "create") {
+    userId = JSON.parse(localStorage.getItem("user_logged"));
+  }
+  if (userId && type !== "create") {
+    ref = doc(db, "users", userId);
+  }
 
   const [userLoaded, setUserLoaded] = useState(false);
 
-  const id = JSON.parse(localStorage.getItem("user_logged"));
-
   const refCreate = collection(db, "users");
 
-  let ref = null
-  if(id){
-    ref = doc(db, "users", id);
-  }
-
   const today = new Date();
-  const minBirthDate = new Date(today.getFullYear() - 18,today.getMonth(),today.getDate()).toISOString().split("T")[0];
-  const maxBirthDate = new Date(today.getFullYear() - 120,today.getMonth(),today.getDate()).toISOString().split("T")[0];
+  const minBirthDate = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate()
+  )
+    .toISOString()
+    .split("T")[0];
+  const maxBirthDate = new Date(
+    today.getFullYear() - 120,
+    today.getMonth(),
+    today.getDate()
+  )
+    .toISOString()
+    .split("T")[0];
 
   let nameButton = "Sign up";
 
   const navigate = useNavigate();
 
   if (type === "update") {
-    nameButton= "Update";
+    nameButton = "Update";
   }
+
+  const goToUpdate = (e) => {
+    e.preventDefault();
+    navigate("/profile/edit", { replace: true });
+  };
 
   const [user, setUser] = useState({
     firstName: "",
@@ -70,6 +86,59 @@ const UserForm = ({ type }) => {
     processData();
   }, []);
 
+  const fieldsValidations = async (e) => {
+    e.preventDefault();
+
+    let user = {
+      firstName: fnameRef.current.value,
+      lastName: lnameRef.current.value,
+      birthDate: birthDateRef.current.value,
+      email: emailRef.current.value,
+      role: userRoleRef.current.value,
+    };
+
+    const nameValidation = () => {
+      if (fnameRef.current.value.length < 2 || lnameRef.current.value.length < 2) {
+        setError("Name must be at least 2 characters long");
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    const passwordValidation = () => {
+      const validate = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{6,}$/;
+      if (validate.test(passwordRef.current.value)) {
+        return true;
+      } else {
+        setError(
+          "Password must be at least 6 characters long and contain capital and lowercase letters, numbers, and symbols."
+        );
+        return false;
+      }
+    };
+
+    const passwordConfirmationValidation = () => {
+      if (passwordConfirmationRef.current.value !== passwordRef.current.value) {
+        setError("The password confirmation does not match");
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    if (
+      nameValidation() &&
+      passwordValidation() &&
+      passwordConfirmationValidation()
+    ) {
+      user = { ...user, password: passwordRef.current.value };
+      await addDoc(refCreate, user);
+      alert("Account created successfully");
+      navigate("/", { replace: true });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let user = {
@@ -77,32 +146,50 @@ const UserForm = ({ type }) => {
       lastName: lnameRef.current.value,
       birthDate: birthDateRef.current.value,
       email: emailRef.current.value,
+      role: userRoleRef.current.value,
     };
     if (type === "create") {
-      user = { ...user, password: passwordRef.current.value };
-      await addDoc(refCreate, user);
-      navigate("/", { replace: true });
+      await fieldsValidations(e);
     }
     if (type === "update") {
       await updateDoc(ref, user);
+      alert("The information was successfully updated.");
+      navigate(-1);
     }
   };
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <form className="grid grid-cols-2 gap-2 w-full lg:w-80 bg-white lg:shadow-xl rounded-xl p-0 lg:p-6 lg:p-10" onSubmit={handleSubmit}>
+      <form
+        className="grid grid-cols-2 gap-2 w-full lg:w-80 bg-white lg:shadow-xl rounded-xl p-0 lg:p-6 lg:p-10"
+        onSubmit={handleSubmit}
+      >
         {userLoaded ? (
           <>
             {type === "create" && (
-              <Typography variant="h5" className="col-span-2 m-2 text-center text-[#0C3B2E]">Create your account</Typography>
+              <Typography
+                variant="h5"
+                className="col-span-2 m-1 text-center text-[#0C3B2E]"
+              >
+                Create your account
+              </Typography>
             )}
             {type === "update" && (
-              <Typography variant="h5" className="col-span-2 m-2 text-center text-[#0C3B2E]">Update profile information</Typography>
+              <Typography
+                variant="h5"
+                className="col-span-2 m-1 text-center text-[#0C3B2E]"
+              >
+                Update profile information
+              </Typography>
             )}
             {type === "view" && (
-              <Typography variant="h5" className="col-span-2 m-2 text-center text-[#0C3B2E]">Profile information</Typography>
+              <Typography
+                variant="h5"
+                className="col-span-2 m-1 text-center text-[#0C3B2E]"
+              >
+                Profile information
+              </Typography>
             )}
-
             <TextField
               disabled={type === "view"}
               inputRef={fnameRef}
@@ -110,7 +197,7 @@ const UserForm = ({ type }) => {
               label="First name"
               variant="outlined"
               type="text"
-              className="m-2 col-span-2 lg:col-span-1"
+              className="m-1 col-span-2 lg:col-span-1"
             />
             <TextField
               disabled={type === "view"}
@@ -119,7 +206,7 @@ const UserForm = ({ type }) => {
               label="Last name"
               variant="outlined"
               type="text"
-              className="m-2 col-span-2 lg:col-span-1"
+              className="m-1 col-span-2 lg:col-span-1"
             />
             <TextField
               disabled={type === "view"}
@@ -129,7 +216,7 @@ const UserForm = ({ type }) => {
               type="date"
               inputProps={{ min: maxBirthDate, max: minBirthDate }}
               defaultValue={user.birthDate}
-              className="m-2 col-span-2 lg:col-span-1"
+              className="m-1 col-span-2 lg:col-span-1"
             />
             <TextField
               disabled={type === "view"}
@@ -138,8 +225,26 @@ const UserForm = ({ type }) => {
               label="Email"
               variant="outlined"
               type="email"
-              className="m-2 col-span-2 lg:col-span-1"
+              className="m-1 col-span-2 lg:col-span-1"
             />
+            <TextField
+              select
+              label="User role"
+              variant="outlined"
+              disabled={type === "view"}
+              SelectProps={{ native: true }}
+              defaultValue={user.role}
+              className="m-1 col-span-2"
+              inputRef={userRoleRef}
+            >
+              <option key="none" value=""></option>
+              <option key="landlord" value="landlord">
+                Landlord
+              </option>
+              <option key="renter" value="renter">
+                Renter
+              </option>
+            </TextField>
             {type === "create" && (
               <>
                 <TextField
@@ -158,13 +263,24 @@ const UserForm = ({ type }) => {
                 />
               </>
             )}
+            {error && <Error children={error}/>}
             {type !== "view" && (
               <Button
                 variant="contained"
                 type="submit"
-                className="m-2 bg-[#FFBA00] col-span-2"
+                className="m-1 bg-[#FFBA00] col-span-2"
               >
                 {nameButton}
+              </Button>
+            )}
+            {type === "view" && (
+              <Button
+                variant="contained"
+                type="button"
+                className="m-2 bg-[#FFBA00] col-span-2"
+                onClick={goToUpdate}
+              >
+                Update user information
               </Button>
             )}
           </>
@@ -173,8 +289,7 @@ const UserForm = ({ type }) => {
         )}
       </form>
     </div>
-);
-
+  );
 };
 
 export { UserForm };
