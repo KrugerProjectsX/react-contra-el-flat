@@ -1,6 +1,7 @@
 import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
-function getUserLogged(){
+async function getUserLogged(){
     const userId = getUserId();
     if(userId){
         const ref = doc(db, "users", userId);
