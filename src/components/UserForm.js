@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import { useEffect, useRef, useState } from "react";
 import { doc, collection, addDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { unstable_HistoryRouter, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Error } from "./Error";
 
 const UserForm = ({ type, userId }) => {
@@ -88,7 +88,7 @@ const UserForm = ({ type, userId }) => {
 
   const fieldsValidations = async (e) => {
     e.preventDefault();
-
+  
     let user = {
       firstName: fnameRef.current.value,
       lastName: lnameRef.current.value,
@@ -96,16 +96,19 @@ const UserForm = ({ type, userId }) => {
       email: emailRef.current.value,
       role: userRoleRef.current.value,
     };
-
+  
     const nameValidation = () => {
-      if (fnameRef.current.value.length < 2 || lnameRef.current.value.length < 2) {
+      if (
+        fnameRef.current.value.length < 2 ||
+        lnameRef.current.value.length < 2
+      ) {
         setError("Name must be at least 2 characters long");
         return false;
       } else {
         return true;
       }
     };
-
+  
     const passwordValidation = () => {
       const validate = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{6,}$/;
       if (validate.test(passwordRef.current.value)) {
@@ -117,7 +120,7 @@ const UserForm = ({ type, userId }) => {
         return false;
       }
     };
-
+  
     const passwordConfirmationValidation = () => {
       if (passwordConfirmationRef.current.value !== passwordRef.current.value) {
         setError("The password confirmation does not match");
@@ -126,18 +129,24 @@ const UserForm = ({ type, userId }) => {
         return true;
       }
     };
-
+  
     if (
       nameValidation() &&
       passwordValidation() &&
       passwordConfirmationValidation()
     ) {
       user = { ...user, password: passwordRef.current.value };
-      await addDoc(refCreate, user);
+      // Guardar el usuario en Firestore
+      const docRef = await addDoc(refCreate, user);
+      // Obtener el ID del usuario recién creado
+      const user_id = docRef.id;
+      // Guardar el ID del usuario en el localStorage
+      localStorage.setItem("user_logged", JSON.stringify(user_id));
       alert("Account created successfully");
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -263,7 +272,7 @@ const UserForm = ({ type, userId }) => {
                 />
               </>
             )}
-            {error && <Error children={error}/>}
+            {error && <Error children={error} />}
             {type !== "view" && (
               <Button
                 variant="contained"
