@@ -1,16 +1,14 @@
-import  Header from "../components/Header"
-import {checkUserLogged} from "../services/actions"
+import FlatTable from "../components/FlatTable"
+import Header from "../components/Header"
+
 
 function Home(){
-
-    checkUserLogged();
-
     return(
         <>
-            <Header/>
-            <h1>home</h1>
+            <Header />
+            <FlatTable type={'all-flats'} />
         </>
     )
 }
 
-export {Home}
+export default Home;

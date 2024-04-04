@@ -15,6 +15,8 @@ import { useState, useEffect } from "react";
 import { getUserLogged } from '../services/users';
 // react router
 import { useNavigate } from "react-router-dom";
+// components
+import Header from "../components/Header";
 
 
 function ViewFlats() {
@@ -44,10 +46,11 @@ function ViewFlats() {
 
     // go to update flat
     function goToUpdate(row) {
+        const view = 'update';
         // confirmation message
         const confirmation = window.confirm('go to the edit flat page?');
         if(confirmation) {
-            navigate(`/flats/view-flat/edit/${row.id}`, { state: { flatId: row.id, flag } });
+            navigate(`/flats/view-flat/edit/${row.id}/${view}`, { state: { flatId: row.id, flag } });
         }    
     }
 
@@ -57,6 +60,7 @@ function ViewFlats() {
 
     return (
         <>
+            <Header />
             <TableContainer>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
