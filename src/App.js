@@ -20,7 +20,7 @@ function App() {
       <Route path={"/flats/view-flat"} element={<ViewFlat />}/>
       <Route path={"/flats/view-flat/edit/:id/:view"} element={<EditFlatPage/>}/>
       <Route path={"/flats/my-flats"} element={<MyFlats />}/>
-      <Route path={"/flats/my-flats/flat-view"} element={<Flat />}/>
+      <Route path={"/flats/my-flats/flat-view"} element={<Flats />}/>
       <Route path={"/flats/my-favorite-flats/"} element={<MyFlats />}/>
 
 

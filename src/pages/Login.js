@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import loginPic from "../images/loginPic.png";
 /* components */
 import { Error } from "../components/Error";
+import { Successful } from "../components/Succesful";
 
 const Login = () => {
   const email = useRef("");
@@ -25,6 +26,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  const [successful, setSuccessful] = useState("")
 
   const handlePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -38,8 +41,11 @@ const Login = () => {
       const user = result.docs[0].data();
       const user_id = result.docs[0].id;
       if (user.password === password.current.value) {
-        localStorage.setItem("user_logged", JSON.stringify(user_id))
-        navigate("/dashboard", { replace: true });
+        localStorage.setItem("user_logged", JSON.stringify(user_id));
+        setSuccessful("Login succesful");
+        setTimeout(()=>{
+          navigate("/dashboard", { replace: true });
+        }, 2000)
       } else {
         setError("Email or password incorrect");
       }
@@ -93,7 +99,9 @@ const Login = () => {
             }}
           />
   
-          {error && <Error children={error} />} {/* Show error component if there's an error*/}
+          {error && <Error children={error} />}
+          {successful && <Successful children={successful} />}
+
           <Button
             variant="contained"
             type="submit"
