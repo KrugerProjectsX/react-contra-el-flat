@@ -93,6 +93,7 @@ const Login = () => {
             }}
           />
   
+          {error && <Error children={error} />} {/* Show error component if there's an error*/}
           <Button
             variant="contained"
             type="submit"
@@ -101,7 +102,6 @@ const Login = () => {
             Log in
           </Button>
   
-          {error && <Error children={error} />} {/* Mostrar el componente Error si hay un mensaje de error */}
   
           <div className="flex flex-col lg:flex-row justify-center lg:justify-start items-center lg:items-start">
             <p className="m-2">Don't have an account?</p>

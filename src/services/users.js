@@ -1,6 +1,5 @@
-// firebase - firestore
-import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 async function getUserLogged(){
     const userId = getUserId();
@@ -15,4 +14,4 @@ function getUserId(){
     return JSON.parse(localStorage.getItem('user_logged')) || false;
 }
 
-export {getUserLogged};
+export {getUserLogged}
