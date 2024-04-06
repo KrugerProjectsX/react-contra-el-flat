@@ -291,7 +291,7 @@ const UserForm = ({ type, userId }) => {
               </>
             )}
             <div className="w-screen lg:w-full">
-              {error && <Error children={error} />}
+              {error && <Error children={error}/>}
               {successful && <Successful children={successful} />}
             </div>
             {type !== "view" && (
