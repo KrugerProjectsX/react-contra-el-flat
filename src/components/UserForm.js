@@ -6,6 +6,7 @@ import { doc, collection, addDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { Error } from "./Error";
+import { Successful } from "./Succesful";
 
 const UserForm = ({ type, userId }) => {
   const currentDate = new Date().toJSON().slice(0, 10);
@@ -18,10 +19,13 @@ const UserForm = ({ type, userId }) => {
   const passwordConfirmationRef = useRef("");
   const userRoleRef = useRef("");
   const [error, setError] = useState("");
+  const [successful, setSuccesful] = useState("");
+
+  const userLogged = JSON.parse(localStorage.getItem("user_logged"));
 
   let ref = null;
   if (userId == null && type !== "create") {
-    userId = JSON.parse(localStorage.getItem("user_logged"));
+    userId = userLogged;
   }
   if (userId && type !== "create") {
     ref = doc(db, "users", userId);
@@ -57,7 +61,7 @@ const UserForm = ({ type, userId }) => {
 
   const goToUpdate = (e) => {
     e.preventDefault();
-    navigate("/profile/edit", { replace: true });
+    navigate("/profile/edit");
   };
 
   const [user, setUser] = useState({
@@ -142,13 +146,15 @@ const UserForm = ({ type, userId }) => {
       const user_id = docRef.id;
       // Guardar el ID del usuario en el localStorage
       localStorage.setItem("user_logged", JSON.stringify(user_id));
-      alert("Account created successfully");
-      navigate("/dashboard", { replace: true });
+      setSuccesful("Account created successfully");
+        setTimeout(()=>{
+          navigate("/dashboard", { replace: true });
+        }, 2000)
     }
   };
   
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { 
     e.preventDefault();
     let user = {
       firstName: fnameRef.current.value,
@@ -162,15 +168,19 @@ const UserForm = ({ type, userId }) => {
     }
     if (type === "update") {
       await updateDoc(ref, user);
-      alert("The information was successfully updated.");
-      navigate(-1);
+
+      setSuccesful("The information was successfully updated.");
+      setTimeout(()=>{
+        navigate(-1);
+      }, 2000) 
+
     }
   };
 
   return (
     <div className="flex items-center justify-center h-screen">
       <form
-        className="grid grid-cols-2 gap-2 w-full lg:w-80 bg-white lg:shadow-xl rounded-xl p-0 lg:p-6 lg:p-10"
+        className="grid grid-cols-2 gap-2 w-full lg:w-80 bg-white lg:shadow-xl rounded-xl p-0 lg:p-6 lg:p-10 mt-6"
         onSubmit={handleSubmit}
       >
         {userLoaded ? (
@@ -200,6 +210,7 @@ const UserForm = ({ type, userId }) => {
               </Typography>
             )}
             <TextField
+              required={type === "create"}
               disabled={type === "view"}
               inputRef={fnameRef}
               defaultValue={user.firstName}
@@ -209,6 +220,7 @@ const UserForm = ({ type, userId }) => {
               className="m-1 col-span-2 lg:col-span-1"
             />
             <TextField
+              required={type === "create"}
               disabled={type === "view"}
               inputRef={lnameRef}
               defaultValue={user.lastName}
@@ -218,6 +230,7 @@ const UserForm = ({ type, userId }) => {
               className="m-1 col-span-2 lg:col-span-1"
             />
             <TextField
+              required={type === "create"}
               disabled={type === "view"}
               inputRef={birthDateRef}
               label="Birth date"
@@ -228,6 +241,7 @@ const UserForm = ({ type, userId }) => {
               className="m-1 col-span-2 lg:col-span-1"
             />
             <TextField
+              required={type === "create"}
               disabled={type === "view"}
               inputRef={emailRef}
               defaultValue={user.email}
@@ -237,6 +251,7 @@ const UserForm = ({ type, userId }) => {
               className="m-1 col-span-2 lg:col-span-1"
             />
             <TextField
+              required={type === "create"}
               select
               label="User role"
               variant="outlined"
@@ -253,10 +268,12 @@ const UserForm = ({ type, userId }) => {
               <option key="renter" value="renter">
                 Renter
               </option>
+              {userLogged === 'sKA5aa0KtEYZdGp8CqKe' && (<option key="admin" value="admin">Admin</option>)}
             </TextField>
             {type === "create" && (
               <>
                 <TextField
+                  required
                   inputRef={passwordRef}
                   label="Password"
                   variant="outlined"
@@ -264,6 +281,7 @@ const UserForm = ({ type, userId }) => {
                   className="m-2 col-span-2"
                 />
                 <TextField
+                  required
                   inputRef={passwordConfirmationRef}
                   label="Password Confirmation"
                   variant="outlined"
@@ -272,7 +290,10 @@ const UserForm = ({ type, userId }) => {
                 />
               </>
             )}
-            {error && <Error children={error} />}
+            <div className="w-screen lg:w-full">
+              {error && <Error children={error}/>}
+              {successful && <Successful children={successful} />}
+            </div>
             {type !== "view" && (
               <Button
                 variant="contained"
