@@ -81,6 +81,16 @@ function EditFlat({ id }) {
 
   return (
     <>
+      {location === "view" && (
+        <h1 className="text-center text-2xl font-bold text-bg-dark-green-900 sm:text-3xl">
+          View flat information
+        </h1>
+      )}
+      {location !== "view" && (
+        <h1 className="text-center text-2xl font-bold text-bg-dark-green-900 sm:text-3xl">
+          Update flat information
+        </h1>
+      )}
       {flatData && (
         <div className="flex items-center justify-center w-full">
           <Box
@@ -90,12 +100,9 @@ function EditFlat({ id }) {
             autoComplete="off"
             onSubmit={handleSubmit}
           >
-            <h1 className="text-center text-2xl font-bold text-bg-dark-green-900 sm:text-3xl">
-              Update flat information
-            </h1>
             <div className="flex gap-4">
               <TextField
-                disabled={location==='view'}
+                disabled={location === "view"}
                 name="city"
                 type="text"
                 label="City"
@@ -106,7 +113,7 @@ function EditFlat({ id }) {
                 inputProps={{ pattern: regex.city.source }}
               />
               <TextField
-                disabled={location==='view'}
+                disabled={location === "view"}
                 name="streetName"
                 type="text"
                 label="Street Name"
@@ -119,7 +126,7 @@ function EditFlat({ id }) {
             </div>
             <div className="flex gap-4">
               <TextField
-                disabled={location==='view'}
+                disabled={location === "view"}
                 name="streetNumber"
                 type="number"
                 label="Street Number"
@@ -130,7 +137,7 @@ function EditFlat({ id }) {
                 inputProps={{ min: 0, pattern: regex.streetNumber.source }}
               />
               <TextField
-                disabled={location==='view'}
+                disabled={location === "view"}
                 name="areaSize"
                 type="number"
                 label="Area Size"
@@ -143,7 +150,7 @@ function EditFlat({ id }) {
             </div>
             <div className="flex gap-4">
               <TextField
-                disabled={location==='view'}
+                disabled={location === "view"}
                 name="yearBuilt"
                 type="number"
                 label="Year built"
@@ -151,20 +158,26 @@ function EditFlat({ id }) {
                 className="mb-3 w-full"
                 value={formData.yearBuilt}
                 onChange={handleInputChange}
-                inputProps={{ min: 1950, max: 2050, pattern: regex.yearBuilt.source }}
+                inputProps={{
+                  min: 1950,
+                  max: 2050,
+                  pattern: regex.yearBuilt.source,
+                }}
               />
               <Box className="flex items-center mb-3 w-full">
                 <Switch
-                  disabled={location==='view'}
+                  disabled={location === "view"}
                   name="hasAc"
                   checked={formData.hasAc}
-                  onChange={(e) => setFormData({ ...formData, hasAc: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, hasAc: e.target.checked })
+                  }
                 />
                 <label className="ml-2">Has AC</label>
               </Box>
             </div>
             <TextField
-              disabled={location==='view'}
+              disabled={location === "view"}
               name="rentPrice"
               type="number"
               label="Rent price"
@@ -175,7 +188,7 @@ function EditFlat({ id }) {
               inputProps={{ min: 0, pattern: regex.rentPrice.source }}
             />
             <TextField
-              disabled={location==='view'}
+              disabled={location === "view"}
               name="dateAvailable"
               type="date"
               variant="outlined"
@@ -184,21 +197,30 @@ function EditFlat({ id }) {
               onChange={handleInputChange}
               inputProps={{ min: minDate, max: maxDate }}
             />
-            <Button
-              variant="contained"
-              sx={{ bgcolor: "#6D9773", color: "#fff" }}
-              className="uppercase font-bold transition-transform transform hover:scale-105 hover:bg-bg-dark-green-900"
-              type="submit"
-            >
-              Update Flat
-            </Button>
-            {location === 'view' && <Button onClick={
-              () => {
-                navigate(`/flats/view-flat/edit/${id}/${location='update'}`, { state: { flatId: id } })
-              }
-            }>
-              update
-            </Button> }
+            {location !== "view" && (
+              <Button
+                variant="contained"
+                sx={{ bgcolor: "#6D9773", color: "#fff" }}
+                className="uppercase font-bold transition-transform transform hover:scale-105 hover:bg-bg-dark-green-900"
+                type="submit"
+              >
+                Update Flat
+              </Button>
+            )}
+            {location === "view" && (
+              <Button
+                sx={{ bgcolor: "#6D9773", color: "#fff" }}
+                className="uppercase font-bold transition-transform transform hover:scale-105 hover:bg-bg-dark-green-900"
+                onClick={() => {
+                  navigate(
+                    `/flats/view-flat/edit/${id}/${(location = "update")}`,
+                    { state: { flatId: id } }
+                  );
+                }}
+              >
+                update
+              </Button>
+            )}
           </Box>
         </div>
       )}

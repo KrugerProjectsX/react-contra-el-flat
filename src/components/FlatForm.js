@@ -95,10 +95,10 @@ function FlatForm() {
         city: cityValue,
         streetName: streetNameValue,
         streetNumber: streetNumberValue,
-        areaSize: areaSizeValue,
+        areaSize: parseInt(areaSizeValue),
         hasAc: hasAcValue,
         yearBuilt: yearBuiltValue,
-        rentPrice: rentPriceValue,
+        rentPrice: parseInt(rentPriceValue),
         dateAvailable: dateAvailableValue,
         user: JSON.parse(localStorage.getItem("user_logged")),
       });
