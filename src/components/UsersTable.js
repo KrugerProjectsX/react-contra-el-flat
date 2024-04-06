@@ -9,9 +9,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {Box, Button, TextField} from "@mui/material";
 /* firebase */
-import { getDocs, query, where, collection } from "firebase/firestore";
+import { getDocs, query, where, collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 
 export default function UsersTable() {
@@ -22,6 +23,8 @@ export default function UsersTable() {
     const [ageValue, setAgeValue] = useState('');
 
     const [users, setUsers] = useState([]);
+
+    const [flag, setFlag] = useState(false);
 
     const getData = async () => {
         
@@ -75,9 +78,15 @@ export default function UsersTable() {
         setUsers(usersSet);
     };
 
+    const deleteUser = async(id) => {
+        const refUser = doc(db, "users", id);
+        await deleteDoc(refUser)
+        setFlag(true)
+    }
+
     useEffect(() => {
         getData();
-    }, [userType, flatsCounter, ageValue]);
+    }, [userType, flatsCounter, ageValue, flag]);
 
     return (
         <>
@@ -138,6 +147,7 @@ export default function UsersTable() {
                             <TableCell className="px-6 py-3 text-xs font-medium text-[#0C3B2E] uppercase tracking-wider" align="center">Role</TableCell>
                             <TableCell className="px-6 py-3 text-xs font-medium text-[#0C3B2E] uppercase tracking-wider" align="center">Flats Count</TableCell>
                             <TableCell className="px-6 py-3 text-xs font-medium text-[#0C3B2E] uppercase tracking-wider" align="center">Edit user</TableCell>
+                            <TableCell className="px-6 py-3 text-xs font-medium text-[#0C3B2E] uppercase tracking-wider" align="center">Delete user</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody className="bg-white divide-y divide-gray-200">
@@ -152,6 +162,11 @@ export default function UsersTable() {
                                 <TableCell className="px-6 py-4 whitespace-nowrap" align="center">
                                     <Button className='text-[#0C3B2E]' href={`/profile/edit/${row.id}`}>
                                         <EditIcon></EditIcon>
+                                    </Button>
+                                </TableCell>
+                                <TableCell className="px-6 py-4 whitespace-nowrap" align="center">
+                                    <Button className='text-[#0C3B2E]' onClick={()=>deleteUser(row.id)}>
+                                        <DeleteIcon></DeleteIcon>
                                     </Button>
                                 </TableCell>
                             </TableRow>

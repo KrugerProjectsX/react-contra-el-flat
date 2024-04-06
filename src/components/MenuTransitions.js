@@ -27,10 +27,10 @@ export default function MenuTransitions({ user, setUser }) {
                 navigate('/dashboard', { replace: true });
             }
             if (menuItem === 'My flats') {
-                //navigate('/', {replace: true});
+                navigate('/flats/my-flats', {replace: true});
             }
             if (menuItem === 'Favorites') {
-                //navigate('/profile/edit', {replace: true});
+                //navigate('/flats/my-favorite-flats/', {replace: true});
             }
             if (menuItem === 'My profile') {
                 navigate('/profile', { replace: true });
