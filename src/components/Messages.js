@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 
 const Messages = ({ flatId }) => {
-  /* const flatId =  ; */
+  
   const ref = doc(db, "flats", flatId);
   const refMessages = collection(db, "messages");
 

@@ -21,7 +21,6 @@ import Header from "../components/Header";
 
 function ViewFlats() {
     const navigate = useNavigate();
-    //navigate("/flats/view-flat/edit", { replace: false });
     async function getUser() {
         const userlogged = await getUserLogged();
         const userRole = userlogged.role;
@@ -88,7 +87,7 @@ function ViewFlats() {
                                 <TableCell align="center">{row.rentPrice}</TableCell>
                                 <TableCell align="center">{row.dateAvailable}</TableCell>
                                 <TableCell align="center">
-                                    { /*userRole === 'owner' &&*/ <Button onClick={() => goToUpdate(row)}>Edit</Button> }
+                                    { userRole === 'owner' && <Button onClick={() => goToUpdate(row)}>Edit</Button> }
                                 </TableCell>
                             </TableRow>
                         ))}
