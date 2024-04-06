@@ -180,7 +180,7 @@ const UserForm = ({ type, userId }) => {
   return (
     <div className="flex items-center justify-center h-screen">
       <form
-        className="grid grid-cols-2 gap-2 w-full lg:w-80 bg-white lg:shadow-xl rounded-xl p-0 lg:p-6 lg:p-10"
+        className="grid grid-cols-2 gap-2 w-full lg:w-80 bg-white lg:shadow-xl rounded-xl p-0 lg:p-6 lg:p-10 mt-6"
         onSubmit={handleSubmit}
       >
         {userLoaded ? (
@@ -290,8 +290,10 @@ const UserForm = ({ type, userId }) => {
                 />
               </>
             )}
-            {error && <Error children={error} />}
-            {successful && <Successful children={successful} />}
+            <div className="w-screen lg:w-full">
+              {error && <Error children={error}/>}
+              {successful && <Successful children={successful} />}
+            </div>
             {type !== "view" && (
               <Button
                 variant="contained"

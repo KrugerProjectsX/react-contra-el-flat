@@ -119,20 +119,20 @@ export default function UsersTable() {
         component="form"
         className="flex justify-center mx-auto max-w-screen-md mb-4"
       >
-        <div className="flex justify-center items-center space-x-4">
-        <TextField
-          select
-          label="Order By"
-          variant="outlined"
-          SelectProps={{ native: true }}
-          className="w-40 my-6"
-          value={orderBy}
-          onChange={(e) => setOrderBy(e.target.value)}
-        >
-          <option value="firstName">First Name</option>
-          <option value="lastName">Last Name</option>
-          <option value="flats">Flats Count</option>
-        </TextField>
+        <div className="lg:flex justify-center items-center space-x-4 text-center">
+          <TextField
+            select
+            label="Order By"
+            variant="outlined"
+            SelectProps={{ native: true }}
+            className="w-40 my-6"
+            value={orderBy}
+            onChange={(e) => setOrderBy(e.target.value)}
+          >
+            <option value="firstName">First Name</option>
+            <option value="lastName">Last Name</option>
+            <option value="flats">Flats Count</option>
+          </TextField>
           <TextField
             select
             label="User Type"
@@ -247,67 +247,67 @@ export default function UsersTable() {
           </TableHead>
           <TableBody className="bg-white divide-y divide-gray-200">
             {sortUsers(users).map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell
-                    className="px-6 py-4 whitespace-nowrap"
-                    align="center"
+              <TableRow key={row.id}>
+                <TableCell
+                  className="px-6 py-4 whitespace-nowrap"
+                  align="center"
+                >
+                  {row.firstName}
+                </TableCell>
+                <TableCell
+                  className="px-6 py-4 whitespace-nowrap"
+                  align="center"
+                >
+                  {row.lastName}
+                </TableCell>
+                <TableCell
+                  className="px-6 py-4 whitespace-nowrap"
+                  align="center"
+                >
+                  {row.email}
+                </TableCell>
+                <TableCell
+                  className="px-6 py-4 whitespace-nowrap"
+                  align="center"
+                >
+                  {row.birthDate}
+                </TableCell>
+                <TableCell
+                  className="px-6 py-4 whitespace-nowrap"
+                  align="center"
+                >
+                  {row.role}
+                </TableCell>
+                <TableCell
+                  className="px-6 py-4 whitespace-nowrap"
+                  align="center"
+                >
+                  {row.flats}
+                </TableCell>
+                <TableCell
+                  className="px-6 py-4 whitespace-nowrap"
+                  align="center"
+                >
+                  <Button
+                    className="text-[#0C3B2E]"
+                    href={`/profile/edit/${row.id}`}
                   >
-                    {row.firstName}
-                  </TableCell>
-                  <TableCell
-                    className="px-6 py-4 whitespace-nowrap"
-                    align="center"
+                    <EditIcon></EditIcon>
+                  </Button>
+                </TableCell>
+                <TableCell
+                  className="px-6 py-4 whitespace-nowrap"
+                  align="center"
+                >
+                  <Button
+                    className="text-[#0C3B2E]"
+                    onClick={() => deleteUser(row.id)}
                   >
-                    {row.lastName}
-                  </TableCell>
-                  <TableCell
-                    className="px-6 py-4 whitespace-nowrap"
-                    align="center"
-                  >
-                    {row.email}
-                  </TableCell>
-                  <TableCell
-                    className="px-6 py-4 whitespace-nowrap"
-                    align="center"
-                  >
-                    {row.birthDate}
-                  </TableCell>
-                  <TableCell
-                    className="px-6 py-4 whitespace-nowrap"
-                    align="center"
-                  >
-                    {row.role}
-                  </TableCell>
-                  <TableCell
-                    className="px-6 py-4 whitespace-nowrap"
-                    align="center"
-                  >
-                    {row.flats}
-                  </TableCell>
-                  <TableCell
-                    className="px-6 py-4 whitespace-nowrap"
-                    align="center"
-                  >
-                    <Button
-                      className="text-[#0C3B2E]"
-                      href={`/profile/edit/${row.id}`}
-                    >
-                      <EditIcon></EditIcon>
-                    </Button>
-                  </TableCell>
-                  <TableCell
-                    className="px-6 py-4 whitespace-nowrap"
-                    align="center"
-                  >
-                    <Button
-                      className="text-[#0C3B2E]"
-                      onClick={() => deleteUser(row.id)}
-                    >
-                      <DeleteIcon></DeleteIcon>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    <DeleteIcon></DeleteIcon>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
