@@ -4,8 +4,21 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import validateInput from "../services/inputValidations";
+import { getUserLogged } from "../services/users";
 
 function FlatForm() {
+  //get user logged name
+  async function getDataUserLogged() {
+    const dataUserLogged = await getUserLogged();
+    return dataUserLogged.firstName + ' ' + dataUserLogged.lastName;
+  }
+  
+
+  async function getEmailLogged() {
+    const emailLogged = await getUserLogged();
+    return emailLogged.email;
+  }
+  
   const regex = {
     city: /^[\w\s'-]+$/,
     streetName: /^[\w\s'-]+$/,
@@ -101,6 +114,8 @@ function FlatForm() {
         rentPrice: parseInt(rentPriceValue),
         dateAvailable: dateAvailableValue,
         user: JSON.parse(localStorage.getItem("user_logged")),
+        email: await getEmailLogged(),
+        landLord: await getDataUserLogged()
       });
 
       alert("Flat added successfully!");

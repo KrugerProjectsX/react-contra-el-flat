@@ -75,34 +75,7 @@ function FlatTable({ type }) {
     
           setFlats(allFlats);
         }
-        setLoading(false);
-        // const data = await getDocs(ref);
-        // const allFlats = [];
-        // for (const item of data.docs) {
-        //   const search = query(
-        //     reFav,
-        //     where("userId", "==", userId),
-        //     where("flatId", "==", item.id)
-        //   );
-        //   const dataFav = await getDocs(search);
-        //   let favorite = false;
-        //   if (dataFav.docs.length > 0) {
-        //     favorite = dataFav.docs[0].id;
-        //   }
-        //   const flatsWithFav = {
-        //     ...item.data(),
-        //     id: item.id,
-        //     favorite: favorite,
-        //   };
-        //   allFlats.push(flatsWithFav);
-        // }
-        // // filters
-        // // search query
-        // if (city) {
-        //    flatQuery = query(flatQuery, where("city", "==", city));
-        // }
-        
-        // setFlats(allFlats);
+          setLoading(true);
       } catch (error) {
         console.error("Error al obtener los detalles de los flats:", error);
       }
@@ -191,7 +164,7 @@ function FlatTable({ type }) {
   return (
     <>
       {type !== "my-flats" && (
-        <div className="flex justify-center space-x-4 mt-4 mb-4">
+        <div className="flex flex-col m-4 gap-4 md:flex-row">
           <TextField
             label="City"
             variant="outlined"
@@ -205,6 +178,58 @@ function FlatTable({ type }) {
             SelectProps={{ native: true }}
             value={areaSize}
             onChange={(e) => setAreaSize(e.target.value)}
+            fullWidth
+            sx={{ marginBottom: "20px" }}
+          >
+            <option key={"none"} value={""}></option>
+            <option key={"100-200"} value={"100-200"}>
+              {" "}
+              100 - 200
+            </option>
+            <option key={"200-300"} value={"201-300"}>
+              {" "}
+              200 - 300{" "}
+            </option>
+            <option key={"300-400"} value={"301-400"}>
+              {" "}
+              300 - 400{" "}
+            </option>
+            <option key={"400-500"} value={"401-500"}>
+              {" "}
+              400 - 500{" "}
+            </option>
+            <option key={"500-600"} value={"501-600"}>
+              {" "}
+              500 - 600{" "}
+            </option>
+            <option key={"600-700"} value={"601-700"}>
+              {" "}
+              600 - 700{" "}
+            </option>
+            <option key={"700-800"} value={"701-800"}>
+              {" "}
+              700 - 800{" "}
+            </option>
+            <option key={"800-900"} value={"801-900"}>
+              {" "}
+              800 - 900{" "}
+            </option>
+            <option key={"900-1000"} value={"901-1000"}>
+              {" "}
+              900 - 1000{" "}
+            </option>
+            <option key={"1000"} value={"+1000"}>
+              {" "}
+              + 1000{" "}
+            </option>
+          </TextField>
+          <TextField
+            select
+            label={"Rent Price Range"}
+            variant="outlined"
+            SelectProps={{ native: true }}
+            value={rentPrice}
+            onChange={(e) => setRentPrice(e.target.value)}
             fullWidth
             sx={{ marginBottom: "20px" }}
           >
@@ -316,6 +341,8 @@ function FlatTable({ type }) {
               <TableCell align="center">Year built</TableCell>
               <TableCell align="center">Rent price</TableCell>
               <TableCell align="center">Date available</TableCell>
+              <TableCell align="center">Email</TableCell>
+              <TableCell align="center">Owner</TableCell>
               {type === "my-flats" && (
                 <TableCell align="center">Edit</TableCell>
               )}
@@ -345,6 +372,8 @@ function FlatTable({ type }) {
                 <TableCell align="center">{row.yearBuilt}</TableCell>
                 <TableCell align="center">{row.rentPrice}</TableCell>
                 <TableCell align="center">{row.dateAvailable}</TableCell>
+                <TableCell align="center">{row.email}</TableCell>
+                <TableCell align="center">{row.landLord}</TableCell>
                 {type === "my-flats" && (
                   <TableCell align="center">
                     <Button onClick={() => goToUpdate(row)}>edit</Button>

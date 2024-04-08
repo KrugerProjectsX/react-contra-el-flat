@@ -7,13 +7,32 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
+import { getUserLogged } from '../services/users';
 
 function EditFlat({ id }) {
   let location = useLocation();
   location = location.pathname.substring(location.pathname.length - 4);
   console.log(location);
   const navigate = useNavigate();
-  //console.log('VIEW: ' + view);
+
+  const getUserId = () => (JSON.parse(localStorage.getItem('user_logged')) || false)
+  const userId = getUserId();
+  console.log('user id -> ' + userId);
+  console.log('flat id ->' + id);
+
+  // check if user logged is owner
+  async function checkUserFlat(userId, flatId) {
+    const flatsRef = await getDoc(doc(db, 'flats', flatId));
+    if (flatsRef.exists()) {
+      const flatData = flatsRef.data();
+      if (flatData.user === userId) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  const [checkUserOwner, setCheckUserOwner] = useState(false);
 
   const regex = {
     city: /^[\w\s'-]+$/,
@@ -37,6 +56,7 @@ function EditFlat({ id }) {
     yearBuilt: '',
     rentPrice: '',
     dateAvailable: '',
+    user: ''
   });
 
   async function fetchFlatData() {
@@ -54,9 +74,19 @@ function EditFlat({ id }) {
     }
   }
 
+
   useEffect(() => {
-    fetchFlatData();
+    fetchFlatData()
   }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      const owner = await checkUserFlat(userId, id);
+      setCheckUserOwner(owner);
+    }
+    fetchData();
+    
+  }, [userId, id]);
 
   function handleInputChange(e) {
     const { name, value } = e.target;
@@ -66,17 +96,23 @@ function EditFlat({ id }) {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      await updateDataFlat(formData);
-      alert('Flat updated successfully!');
-      navigate(`/flats`, { replace: false });
+      const checkuser = await checkUserFlat(userId, id);
+      if (checkuser === true) {
+        await updateDataFlat(formData);
+        alert('Flat updated successfully!');
+        navigate(`/flats`, { replace: false });
+      } else {
+        alert('You cannot edit this flat');
+      }
     } catch (error) {
       alert('Error updating flat:', error);
     }
   }
+  
 
-  async function updateDataFlat(data) {
-    const flatRef = doc(db, 'flats', id);
-    await updateDoc(flatRef, data);
+  async function updateDataFlat(data) {    
+      const flatRef = doc(db, 'flats', id);
+      await updateDoc(flatRef, data);
   }
 
   return (
@@ -197,7 +233,7 @@ function EditFlat({ id }) {
               onChange={handleInputChange}
               inputProps={{ min: minDate, max: maxDate }}
             />
-            {location !== "view" && (
+            {(location !== "view") && (
               <Button
                 variant="contained"
                 sx={{ bgcolor: "#6D9773", color: "#fff" }}
@@ -207,7 +243,7 @@ function EditFlat({ id }) {
                 Update Flat
               </Button>
             )}
-            {location === "view" && (
+            {(location === "view" && checkUserOwner === true) && (
               <Button
                 sx={{ bgcolor: "#6D9773", color: "#fff" }}
                 className="uppercase font-bold transition-transform transform hover:scale-105 hover:bg-bg-dark-green-900"
