@@ -28,6 +28,7 @@ function FlatTable({ type }) {
   const [loading, setLoading] = useState(false);
 
   // search states
+  const [orderBy, setOrderBy] = useState("city");
   const [city, setCity] = useState("");
   const [rentPrice, setRentPrice] = useState(0);
   const [areaSize, setAreaSize] = useState(0);
@@ -75,34 +76,7 @@ function FlatTable({ type }) {
     
           setFlats(allFlats);
         }
-        setLoading(false);
-        // const data = await getDocs(ref);
-        // const allFlats = [];
-        // for (const item of data.docs) {
-        //   const search = query(
-        //     reFav,
-        //     where("userId", "==", userId),
-        //     where("flatId", "==", item.id)
-        //   );
-        //   const dataFav = await getDocs(search);
-        //   let favorite = false;
-        //   if (dataFav.docs.length > 0) {
-        //     favorite = dataFav.docs[0].id;
-        //   }
-        //   const flatsWithFav = {
-        //     ...item.data(),
-        //     id: item.id,
-        //     favorite: favorite,
-        //   };
-        //   allFlats.push(flatsWithFav);
-        // }
-        // // filters
-        // // search query
-        // if (city) {
-        //    flatQuery = query(flatQuery, where("city", "==", city));
-        // }
-        
-        // setFlats(allFlats);
+          setLoading(true);
       } catch (error) {
         console.error("Error al obtener los detalles de los flats:", error);
       }
@@ -183,6 +157,15 @@ function FlatTable({ type }) {
         navigate(`/flats/view-flat/edit/${row.id}/${view}`, { state: { flatId: row.id, flag } });
     }
   }
+
+  //sort flats
+  const sortFlats = (flats) => {
+    return flats.sort((a, b) => {
+      if (a[orderBy] < b[orderBy]) return -1;
+      if (a[orderBy] > b[orderBy]) return 1;
+      return 0;
+    });
+  };
   
   useEffect( () => {
     getData()
@@ -191,28 +174,43 @@ function FlatTable({ type }) {
   return (
     <>
       {type !== "my-flats" && (
-        <div className="flex justify-center space-x-4 mt-4 mb-4">
-          <TextField
-            label="City"
-            variant="outlined"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-          />
-        <TextField
-            select
-            label={"Area Size Range"}
-            variant="outlined"
-            SelectProps={{ native: true }}
-            value={areaSize}
-            onChange={(e) => setAreaSize(e.target.value)}
-            fullWidth
-            sx={{ marginBottom: "20px" }}
-          >
-            <option key={"none"} value={""}></option>
-            <option key={"100-200"} value={"100-200"}>
-              {" "}
-              100 - 200
-            </option>
+  <div className="flex flex-col justify-center items-center m-4 gap-4 md:flex-row rounded-lg shadow-lg mx-auto max-w-screen-md mt-6">
+    <TextField
+      select
+      label="Order By"
+      variant="outlined"
+      SelectProps={{ native: true }}
+      value={orderBy}
+      onChange={(e) => setOrderBy(e.target.value)}
+      className="flex flex-col md:w-40 w-full mt-6 md:mb-4"
+    >
+      <option value="city">City</option>
+      <option value="rentPrice">Price</option>
+      <option value="areaSize">Area size</option>
+    </TextField>
+    <TextField
+      label="City"
+      variant="outlined"
+      value={city}
+      className="flex flex-col md:w-40 w-full mt-6 md:mb-4"
+      onChange={(e) => setCity(e.target.value)}
+    />
+    <TextField
+      select
+      label={"Area Size Range"}
+      variant="outlined"
+      SelectProps={{ native: true }}
+      value={areaSize}
+      onChange={(e) => setAreaSize(e.target.value)}
+      fullWidth
+      className="flex flex-col md:w-40 w-full mt-6"
+      sx={{ marginBottom: "20px" }}
+    >
+      <option key={"none"} value={""}></option>
+      <option key={"100-200"} value={"100-200"}>
+        {" "}
+        100 - 200
+        </option>
             <option key={"200-300"} value={"201-300"}>
               {" "}
               200 - 300{" "}
@@ -249,23 +247,24 @@ function FlatTable({ type }) {
               {" "}
               + 1000{" "}
             </option>
-          </TextField>
-          <TextField
-            select
-            label={"Rent Price Range"}
-            variant="outlined"
-            SelectProps={{ native: true }}
-            value={rentPrice}
-            onChange={(e) => setRentPrice(e.target.value)}
-            fullWidth
-            sx={{ marginBottom: "20px" }}
-          >
-            <option key={"none"} value={""}></option>
-            <option key={"100-200"} value={"100-200"}>
-              {" "}
-              100 - 200
-            </option>
-            <option key={"200-300"} value={"201-300"}>
+    </TextField>
+    <TextField
+      select
+      label={"Rent Price Range"}
+      variant="outlined"
+      SelectProps={{ native: true }}
+      value={rentPrice}
+      onChange={(e) => setRentPrice(e.target.value)}
+      fullWidth
+      className="flex flex-col md:w-40 w-full mt-6 text-center"
+      sx={{ marginBottom: "20px" }}
+    >
+      <option key={"none"} value={""}></option>
+      <option key={"100-200"} value={"100-200"}>
+        {" "}
+        100 - 200
+      </option>
+      <option key={"200-300"} value={"201-300"}>
               {" "}
               200 - 300{" "}
             </option>
@@ -301,41 +300,42 @@ function FlatTable({ type }) {
               {" "}
               + 1000{" "}
             </option>
-          </TextField>
-        </div>
-      )}
+    </TextField>
+  </div>
+)}
+
       <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
-            <TableRow className="bg-bg-tan-600 uppercase">
-              <TableCell align="center">City</TableCell>
-              <TableCell align="center">Street name</TableCell>
-              <TableCell align="center">Street number</TableCell>
-              <TableCell align="center">Area size</TableCell>
-              <TableCell align="center">Has AC</TableCell>
-              <TableCell align="center">Year built</TableCell>
-              <TableCell align="center">Rent price</TableCell>
-              <TableCell align="center">Date available</TableCell>
+            <TableRow className="bg-[#0C3B2E] uppercase">
+              <TableCell align="center" className="text-[#6D9773]">City</TableCell>
+              <TableCell align="center" className="text-[#6D9773]">Street name</TableCell>
+              <TableCell align="center" className="text-[#6D9773]">Street number</TableCell>
+              <TableCell align="center" className="text-[#6D9773]">Area size</TableCell>
+              <TableCell align="center" className="text-[#6D9773]">Has AC</TableCell>
+              <TableCell align="center" className="text-[#6D9773]">Year built</TableCell>
+              <TableCell align="center" className="text-[#6D9773]">Rent price</TableCell>
+              <TableCell align="center" className="text-[#6D9773]">Date available</TableCell>
               {type === "my-flats" && (
-                <TableCell align="center">Edit</TableCell>
+                <TableCell align="center" className="text-[#6D9773]">Edit</TableCell>
               )}
               {(type === "my-flats" ||
                 type === "all-flats" ||
                 type === "favorite-flats") && (
-                <TableCell align="center">View</TableCell>
+                <TableCell align="center" className="text-[#6D9773]">View</TableCell>
               )}
               {(type === "all-flats" || type === "favorite-flats") && (
-                <TableCell align="center">
+                <TableCell align="center" className="text-[#6D9773]">
                   Favorites
                 </TableCell>
               )}
               {type === "my-flats" && (
-                <TableCell align="center">Delete</TableCell>
+                <TableCell align="center" className="text-[#6D9773]">Delete</TableCell>
               )}
             </TableRow>
           </TableHead>
           <TableBody>
-            {flats.map((row) => (
+            {sortFlats(flats).map((row) => (
               <TableRow key={row.id}>
                 <TableCell align="center">{row.city}</TableCell>
                 <TableCell align="center">{row.streetName}</TableCell>

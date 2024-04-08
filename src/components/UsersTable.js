@@ -8,6 +8,8 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Slider from "@mui/material/Slider";
+import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, TextField } from "@mui/material";
@@ -27,7 +29,7 @@ export default function UsersTable() {
   const refFlats = collection(db, "flats");
   const [userType, setUserType] = useState("");
   const [flatsCounter, setFlatsCounter] = useState("");
-  const [ageValue, setAgeValue] = useState("");
+  const [valueSlider, setValueSlider] = React.useState([18, 120]);
   const [orderBy, setOrderBy] = useState("firstName");
 
   const [users, setUsers] = useState([]);
@@ -41,21 +43,25 @@ export default function UsersTable() {
       arrayWhere.push(where("role", "==", userType));
     }
 
-    if (ageValue) {
+    if (valueSlider && valueSlider.length > 1) {
       const today = new Date();
       const minBirthDate = new Date(
-        today.getFullYear() - ageValue,
+        today.getFullYear() - valueSlider[0],
         today.getMonth(),
         today.getDate()
-      );
+      )
+        .toISOString()
+        .split("T")[0];
       const maxBirthDate = new Date(
-        today.getFullYear() - ageValue - 1,
+        today.getFullYear() - valueSlider[1],
         today.getMonth(),
         today.getDate()
-      );
+      )
+        .toISOString()
+        .split("T")[0];
 
-      arrayWhere.push(where("birthDate", ">=", minBirthDate));
-      arrayWhere.push(where("birthDate", "<", maxBirthDate));
+      arrayWhere.push(where("birthDate", ">=", maxBirthDate));
+      arrayWhere.push(where("birthDate", "<=", minBirthDate));
     }
 
     const searchUser = query(ref, ...arrayWhere);
@@ -111,83 +117,99 @@ export default function UsersTable() {
 
   useEffect(() => {
     getData();
-  }, [userType, flatsCounter, ageValue, flag]);
+  }, [userType, flatsCounter, valueSlider, flag]);
 
   return (
     <>
-      <Box
-        component="form"
-        className="flex justify-center mx-auto max-w-screen-md mb-4"
-      >
-        <div className="lg:flex justify-center items-center space-x-4 text-center">
-          <TextField
-            select
-            label="Order By"
-            variant="outlined"
-            SelectProps={{ native: true }}
-            className="w-40 my-6"
-            value={orderBy}
-            onChange={(e) => setOrderBy(e.target.value)}
+        <h1 className="text-center text-2xl font-bold text-bg-dark-green-900 sm:text-3xl">All users</h1>
+      <>
+        <div className="rounded-lg shadow-lg mx-auto max-w-screen-md mt-4">
+          <Box
+            component="form"
+            className="flex justify-center mx-auto max-w-screen-md mb-4 align-center"
           >
-            <option value="firstName">First Name</option>
-            <option value="lastName">Last Name</option>
-            <option value="flats">Flats Count</option>
-          </TextField>
-          <TextField
-            select
-            label="User Type"
-            variant="outlined"
-            SelectProps={{ native: true }}
-            className="w-40 my-6"
-            value={userType}
-            onChange={(e) => setUserType(e.target.value)}
+            <div className="lg:flex justify-center items-center space-x-4 text-center">
+              <div className="flex flex-col w-40 mt-6">
+                <TextField
+                  select
+                  label="Order By"
+                  variant="outlined"
+                  SelectProps={{ native: true }}
+                  value={orderBy}
+                  onChange={(e) => setOrderBy(e.target.value)}
+                >
+                  <option value="firstName">First Name</option>
+                  <option value="lastName">Last Name</option>
+                  <option value="flats">Flats Count</option>
+                </TextField>
+              </div>
+              <div className="flex flex-col w-40 mt-6">
+                <TextField
+                  select
+                  label="User Type"
+                  variant="outlined"
+                  SelectProps={{ native: true }}
+                  value={userType}
+                  onChange={(e) => setUserType(e.target.value)}
+                >
+                  <option key="none" value=""></option>
+                  <option key="landlord" value="landlord">
+                    Landlords
+                  </option>
+                  <option key="renter" value="renter">
+                    Renters
+                  </option>
+                  <option key="admin" value="admin">
+                    Admins
+                  </option>
+                </TextField>
+              </div>
+              <div className="flex flex-col w-40 mt-6">
+                <TextField
+                  select
+                  label="Flats Counter"
+                  variant="outlined"
+                  SelectProps={{ native: true }}
+                  value={flatsCounter}
+                  onChange={(e) => setFlatsCounter(e.target.value)}
+                >
+                  <option key="none" value=""></option>
+                  <option key="0-5" value="0-5">
+                    0-5
+                  </option>
+                  <option key="6-20" value="6-20">
+                    6-20
+                  </option>
+                  <option key="21-60" value="21-60">
+                    21-60
+                  </option>
+                  <option key="61+" value="61+">
+                    61+
+                  </option>
+                </TextField>
+              </div>
+            </div>
+          </Box>
+          <Box
+            component="form"
+            className="flex justify-center mx-auto max-w-screen-md mb-4"
           >
-            <option key="none" value=""></option>
-            <option key="landlord" value="landlord">
-              Landlords
-            </option>
-            <option key="renter" value="renter">
-              Renters
-            </option>
-            <option key="admin" value="admin">
-              Admins
-            </option>
-          </TextField>
-
-          <TextField
-            select
-            label="Flats Counter"
-            variant="outlined"
-            SelectProps={{ native: true }}
-            className="w-40 my-6"
-            value={flatsCounter}
-            onChange={(e) => setFlatsCounter(e.target.value)}
-          >
-            <option key="none" value=""></option>
-            <option key="0-5" value="0-5">
-              0-5
-            </option>
-            <option key="6-20" value="6-20">
-              6-20
-            </option>
-            <option key="21-60" value="21-60">
-              21-60
-            </option>
-            <option key="61+" value="61+">
-              61+
-            </option>
-          </TextField>
-
-          <TextField
-            type="number"
-            label="Age"
-            variant="outlined"
-            className="w-40 my-6"
-            onChange={(e) => setAgeValue(parseInt(e.target.value))}
-          ></TextField>
+            <div className="flex justify-center w-80 my-6">
+              <Slider
+                max={120}
+                min={18}
+                step={10}
+                value={valueSlider}
+                onChange={(e, newValue) => setValueSlider(newValue)}
+                getAriaLabel={() => "Age Range"}
+                valueLabelDisplay="auto"
+                className="flex-grow"
+              />
+            </div>
+          </Box>
         </div>
-      </Box>
-
+      </>
+    
       <TableContainer>
         <Table
           className="min-w-full divide-y divide-gray-200"
