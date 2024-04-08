@@ -4,6 +4,7 @@ import { db } from "../firebase";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { Successful } from "./Succesful";
 
 const Messages = ({ flatId }) => {
   
@@ -14,6 +15,8 @@ const Messages = ({ flatId }) => {
   const [type, setType] = useState("create");
   const [messages, setMessages] = useState([]);
   const messageInput = useRef("");
+
+  const [successful, setSuccessful] = useState("");
 
   const getMessages = async () => {
     const search = query(refMessages, where("flatId", "==", flatId));
@@ -51,11 +54,13 @@ const Messages = ({ flatId }) => {
       userId: JSON.parse(localStorage.getItem("user_logged")),
     };
     await addDoc(refMessages, data);
+    setSuccessful('Your message was sent successfully')
   };
 
   return (
-    <div>
-      <h1>Messages</h1>
+    <div className="mt-12 p-2 rounded-lg bg-gray-200 shadow-md">
+      <h1 className="text-center text-2xl font-bold text-bg-dark-green-900 sm:text-3xl">Messages</h1>
+      {successful && <Successful children={successful}/>}
       {type === "create" && (
         <>
           <Box
@@ -65,10 +70,7 @@ const Messages = ({ flatId }) => {
         flex-col
         items-center
         justify-center
-        p-4
-        rounded-lg
-        bg-gray-200
-        shadow-md"
+        p-4"
           >
             <TextField
               type={"text"}
@@ -81,7 +83,7 @@ const Messages = ({ flatId }) => {
             />
             <Button
               type={"submit"}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-[#6D9773] text-white uppercase font-bold transition-transform transform hover:scale-105 hover:bg-bg-dark-green-900"
             >
               Send
             </Button>
