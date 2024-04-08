@@ -6,7 +6,7 @@ function Home(){
     return(
         <>
             <Header />
-            <h1 className="text-center">All flats</h1>
+            <h1 className="text-center text-2xl font-bold text-bg-dark-green-900 sm:text-3xl">All flats</h1>
             <FlatTable type={'all-flats'} />
         </>
     )
