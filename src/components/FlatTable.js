@@ -182,7 +182,7 @@ function FlatTable({ type }) {
       SelectProps={{ native: true }}
       value={orderBy}
       onChange={(e) => setOrderBy(e.target.value)}
-      className="flex flex-col md:w-40 w-full mt-6 md:mb-4"
+      cla ssName="flex flex-col md:w-40 w-full mt-6 md:mb-4"
     >
       <option value="city">City</option>
       <option value="rentPrice">Price</option>
@@ -246,7 +246,7 @@ function FlatTable({ type }) {
             <option key={"1000"} value={"+1000"}>
               {" "}
               + 1000{" "}
-            </option>
+            </option> 
     </TextField>
     <TextField
       select
